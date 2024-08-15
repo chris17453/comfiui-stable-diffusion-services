@@ -4,7 +4,7 @@ import subprocess
 # Function to check service status
 def check_service_status(service_name):
     result = subprocess.run(['sudo', 'systemctl', 'is-active', service_name], stdout=subprocess.PIPE)
-    return result.stdout.decode('utf-8').strip()
+    return result.stdout.decode('utf-8')
 
 # Function to activate the service and return the updated status
 def activate_service(service_name):

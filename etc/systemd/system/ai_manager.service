@@ -8,6 +8,8 @@ Group=SERVICE_GROUP
 WorkingDirectory=INSTALL_DIR/ai_manager
 ExecStart=INSTALL_DIR/ai_manager/venv/bin/python INSTALL_DIR/ai_manager/app.py
 Restart=always
+StandardOutput=append:/var/log/ai_manager.log
+StandardError=append:/var/log/ai_manager.log
 
 [Install]
 WantedBy=multi-user.target
