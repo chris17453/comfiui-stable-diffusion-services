@@ -15,19 +15,15 @@ def activate_service(service_name):
         subprocess.run(['sudo', 'systemctl', 'stop', 'sdwebui.service'])
     else:
         subprocess.run(['sudo', 'systemctl', 'stop', 'comfyui.service'])
-    # Delay before checking status to allow services to start/stop
     time.sleep(5)  # Adjust the delay time as needed
-
-    return check_service_status(service_name), check_service_status('comfyui.service'), check_service_status('sdwebui.service')
+    return get_full_status()
 
 # Function to deactivate all services
 def deactivate_all_services():
     subprocess.run(['sudo', 'systemctl', 'stop', 'comfyui.service'])
     subprocess.run(['sudo', 'systemctl', 'stop', 'sdwebui.service'])
-    # Delay before checking status to allow services to start/stop
     time.sleep(5)  # Adjust the delay time as needed
-
-    return check_service_status('comfyui.service'), check_service_status('sdwebui.service')
+    return get_full_status()
 
 # Function to check statuses initially
 def check_status():
@@ -35,35 +31,35 @@ def check_status():
     sd_status = check_service_status('sdwebui.service')
     return comfyui_status, sd_status
 
+# Function to get all status and link content
+def get_full_status():
+    comfyui_status_value, sd_status_value = check_status()
+    comfyui_link_content = "[Open ComfyUI](/)" if comfyui_status_value == "active" else ""
+    sd_link_content = "[Open Stable Diffusion](/)" if sd_status_value == "active" else ""
+    return comfyui_status_value, sd_status_value, comfyui_link_content, sd_link_content
+
 # Gradio interface layout
 with gr.Blocks() as app:
     gr.Markdown("# AI Manager")
 
-    # Initial status check when the app loads
-    comfyui_status_value, sd_status_value = check_status()
+    comfyui_status = gr.Textbox(label="Comfy UI Status", interactive=False)
+    sd_status = gr.Textbox(label="Stable Diffusion Status", interactive=False)
 
-    # Status display
-    comfyui_status = gr.Textbox(value=comfyui_status_value, label="Comfy UI Status", interactive=False)
-    sd_status = gr.Textbox(value=sd_status_value, label="Stable Diffusion Status", interactive=False)
+    comfyui_link = gr.Markdown("")
+    sd_link = gr.Markdown("")
 
-    # Links to the services if active
-    if comfyui_status_value == "active":
-        gr.Markdown("[Open ComfyUI](/)")
-    if sd_status_value == "active":
-        gr.Markdown("[Open Stable Diffusion](/)")
+    # Load current statuses and update the interface
+    app.load(fn=get_full_status, inputs=[], outputs=[comfyui_status, sd_status, comfyui_link, sd_link])
 
-    # Buttons to activate services, only show if the service is not active
-    if comfyui_status_value != "active":
-        activate_comfyui_btn = gr.Button("Activate Comfy UI")
-        activate_comfyui_btn.click(fn=lambda: activate_service('comfyui.service'), inputs=[], outputs=[comfyui_status, sd_status])
+    activate_comfyui_btn = gr.Button("Activate Comfy UI")
+    activate_comfyui_btn.click(fn=lambda: activate_service('comfyui.service'), inputs=[], outputs=[comfyui_status, sd_status, comfyui_link, sd_link])
 
-    if sd_status_value != "active":
-        activate_sdwebui_btn = gr.Button("Activate Stable Diffusion")
-        activate_sdwebui_btn.click(fn=lambda: activate_service('sdwebui.service'), inputs=[], outputs=[comfyui_status, sd_status])
+    activate_sdwebui_btn = gr.Button("Activate Stable Diffusion")
+    activate_sdwebui_btn.click(fn=lambda: activate_service('sdwebui.service'), inputs=[], outputs=[comfyui_status, sd_status, comfyui_link, sd_link])
 
-    # Deactivate All button
     deactivate_all_btn = gr.Button("Deactivate All Services")
-    deactivate_all_btn.click(fn=deactivate_all_services, inputs=[], outputs=[comfyui_status, sd_status])
+    deactivate_all_btn.click(fn=deactivate_all_services, inputs=[], outputs=[comfyui_status, sd_status, comfyui_link, sd_link])
 
 # Launch the app on port 5000
 app.launch(server_name="127.0.0.1", server_port=5000, root_path="/ai_manager")
+
