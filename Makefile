@@ -6,6 +6,8 @@ INSTALL_DIR=/home/ai-manager/apps
 SERVER_NAME=gpu2.watkinslabs.com
 SERVICE_USER=ai-manager
 SERVICE_GROUP=www-data
+CUDA_TORCH=https://download.pytorch.org/whl/nightly/cu121
+
 
 .PHONY: all install_services install_sdwebui install_comfyui install_nginx configure_nginx  stop_services enable_sdwebui enable_comfyui disable_services
 
@@ -102,7 +104,9 @@ install_sdwebui: create_install_dir
 	@echo "Cloning Stable Diffusion Web UI..."
 	@-git clone $(SD_WEBUI_REPO) $(INSTALL_DIR)/stable-diffusion-webui
 	@echo "Setting up venv for Stable Diffusion Web UI..."
-	@cd $(INSTALL_DIR)/stable-diffusion-webui && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt && deactivate
+	@cd $(INSTALL_DIR)/stable-diffusion-webui && python3 -m venv venv
+	@source venv/bin/activate && pip install --pre torch torchvision torchaudio --index-url $(CUDA_TORCH)  && deactivate
+	@source venv/bin/activate && pip install -r requirements.txt && deactivate
 	@$(MAKE) set_permissions  
 
 # Install ComfyUI
@@ -110,7 +114,9 @@ install_comfyui: create_install_dir
 	@echo "Cloning ComfyUI..."
 	@-git clone $(COMFYUI_REPO) $(INSTALL_DIR)/comfyui
 	@echo "Setting up venv for ComfyUI..."
-	@cd $(INSTALL_DIR)/comfyui && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt && deactivate
+	@cd $(INSTALL_DIR)/comfyui && python3 -m venv venv 
+	@source venv/bin/activate && pip install --pre torch torchvision torchaudio --index-url $(CUDA_TORCH)  && deactivate
+	@source venv/bin/activate &&pip install -r requirements.txt && deactivate
 	@$(MAKE) set_permissions  
 
 install: install_nginx install_sdwebui install_comfyui 
@@ -209,6 +215,9 @@ disable_services:
 	@systemctl disable comfyui.service
 
 
+clear_venv:
+	@rm -rf $(INSTALL_DIR)/comfyui/venv
+	@rm -rf $(INSTALL_DIR)/stable-diffusion-webui/venv
 
 setup: install_services configure_nginx
 
