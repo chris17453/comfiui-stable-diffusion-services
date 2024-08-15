@@ -83,7 +83,7 @@ configure_nginx:
 		echo "Nginx configuration not found, skipping backup."; \
 	fi
 	@echo "Configuring Nginx..."
-	sudo cp nginx/nginx.conf /etc/nginx/nginx.conf
+	sudo cp etc/nginx/nginx.conf /etc/nginx/nginx.conf
 	sudo sed -i "s|SERVER_NAME|$(SERVER_NAME)|g" /etc/nginx/nginx.conf
 	@echo "Testing Nginx configuration..."
 	sudo nginx -t
