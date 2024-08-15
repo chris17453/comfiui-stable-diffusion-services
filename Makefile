@@ -23,7 +23,7 @@ help:
 	@echo "  enable_comfyui       Enable ComfyUI (and disable Stable Diffusion Web UI)"
 	@echo "  disable_services     Disable both sdwebui and comfyui services"
 	@echo "  copy_app             Copy the ai_manager app to the installation directory"
- 	@echo "  create_install_dir   Create the installation directory if it doesn't exist"
+	@echo "  create_install_dir   Create the installation directory if it doesn't exist"
 
 
 # Create the installation directory if it doesn't exist
