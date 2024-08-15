@@ -3,6 +3,9 @@ import subprocess
 
 app = Flask(__name__)
 
+app.config['APPLICATION_ROOT'] = '/ai_manager'
+
+
 def check_service_status(service_name):
     result = subprocess.run(['sudo', 'systemctl', 'is-active', service_name], stdout=subprocess.PIPE)
     return result.stdout.decode('utf-8').strip()
