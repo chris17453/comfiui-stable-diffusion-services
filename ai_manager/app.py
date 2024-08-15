@@ -33,8 +33,8 @@ with gr.Blocks() as app:
     activate_sdwebui_btn = gr.Button("Activate Stable Diffusion")
     
     # Button click handlers
-    activate_comfyui_btn.click(fn=activate_service, inputs=[], outputs=comfyui_status, queue=False, args=["comfyui.service"])
-    activate_sdwebui_btn.click(fn=activate_service, inputs=[], outputs=sd_status, queue=False, args=["sdwebui.service"])
+    activate_comfyui_btn.click(fn=lambda: activate_service('comfyui.service'), inputs=[], outputs=comfyui_status)
+    activate_sdwebui_btn.click(fn=lambda: activate_service('sdwebui.service'), inputs=[], outputs=sd_status)
 
 # Launch the app on port 5000
 app.launch(server_port=5000)
