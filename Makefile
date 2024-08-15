@@ -38,6 +38,15 @@ help:
 
 
 
+# Set permissions for the /opt/AI directory
+set_permissions:
+	@echo "Setting permissions for $(INSTALL_DIR) directory..."
+	sudo chown -R $(SERVICE_USER):$(SERVICE_GROUP) $(INSTALL_DIR)
+	sudo chmod -R 775 $(INSTALL_DIR)
+
+setup_ai_manager_user: create_ai_manager_user update_sudoers set_permissions
+	@echo "ai_manager user setup complete and permissions set."
+
 
 # Create the installation directory if it doesn't exist
 create_install_dir:
@@ -50,10 +59,11 @@ create_install_dir:
 
 
 # Copy the ai_manager app to the installation directory
-install_ai_manager: create_install_dir
+install_ai_manager: create_install_dir 
 	@echo "Copying ai_manager app to $(INSTALL_DIR)..."
 	rsync -av --exclude='venv' $(APP_SOURCE_DIR)/ $(INSTALL_DIR)/ai_manager/
 	$(MAKE) setup_ai_manager_venv
+	$(MAKE) set_permissions  
 
 
 # Set up virtual environment for ai_manager and install Flask
@@ -62,6 +72,7 @@ setup_ai_manager_venv: create_install_dir
 	python3 -m venv $(INSTALL_DIR)/ai_manager/venv
 	@echo "Installing Flask in ai_manager venv..."
 	$(INSTALL_DIR)/ai_manager/venv/bin/pip install Flask gradio 
+	$(MAKE) set_permissions  
 
 
 # Install Stable Diffusion Web UI
@@ -70,6 +81,7 @@ install_sdwebui: create_install_dir
 	git clone $(SD_WEBUI_REPO) $(INSTALL_DIR)/stable-diffusion-webui
 	@echo "Setting up venv for Stable Diffusion Web UI..."
 	cd $(INSTALL_DIR)/stable-diffusion-webui && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt && deactivate
+	$(MAKE) set_permissions  
 
 # Install ComfyUI
 install_comfyui: create_install_dir
@@ -77,6 +89,7 @@ install_comfyui: create_install_dir
 	git clone $(COMFYUI_REPO) $(INSTALL_DIR)/comfyui
 	@echo "Setting up venv for ComfyUI..."
 	cd $(INSTALL_DIR)/comfyui && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt && deactivate
+	$(MAKE) set_permissions  
 
 # Install and configure services
 install_services: install_ai_manager
