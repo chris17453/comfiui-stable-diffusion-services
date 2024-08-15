@@ -61,7 +61,7 @@ setup_ai_manager_venv: create_install_dir
 	@echo "Setting up venv for ai_manager..."
 	python3 -m venv $(INSTALL_DIR)/ai_manager/venv
 	@echo "Installing Flask in ai_manager venv..."
-	$(INSTALL_DIR)/ai_manager/venv/bin/pip install Flask
+	$(INSTALL_DIR)/ai_manager/venv/bin/pip install Flask, gradio 
 
 
 # Install Stable Diffusion Web UI
