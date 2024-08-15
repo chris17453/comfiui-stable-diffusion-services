@@ -1,3 +1,8 @@
+# Check if running as sudo
+ifndef SUDO_USER
+    $(error This Makefile must be run as root or using sudo)
+endif
+
 # Variables
 SD_WEBUI_REPO=https://github.com/AUTOMATIC1111/stable-diffusion-webui.git
 COMFYUI_REPO=https://github.com/comfyanonymous/ComfyUI.git
