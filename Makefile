@@ -194,15 +194,19 @@ create_ai_manager_user:
 	sudo usermod -aG $(SERVICE_GROUP) $(SERVICE_USER)
 	@echo "User $(SERVICE_USER) added to $(SERVICE_GROUP)..."
 
-# Update sudoers file to allow ai_manager to run necessary commands without a password
-update_sudoers:
-	@echo "Updating sudoers file..."
-	@echo "$(SERVICE_USER) ALL=(ALL) NOPASSWD: /bin/systemctl start comfyui.service, /bin/systemctl start sdwebui.service, /bin/systemctl is-active" | sudo EDITOR='tee -a' visudo
-	@echo "Sudoers file updated successfully."
+# Create sudoers file for ai-manager
+create_sudoers_file:
+	@echo "Creating sudoers file for $(SERVICE_USER)..."
+	@echo "$(SERVICE_USER) ALL=(ALL) NOPASSWD: /bin/systemctl start ai_manager.service, /bin/systemctl stop ai_manager.service, /bin/systemctl restart ai_manager.service, /bin/systemctl is-active ai_manager.service" | sudo tee /etc/sudoers.d/ai-manager >/dev/null
+	@echo "$(SERVICE_USER) ALL=(ALL) NOPASSWD: /bin/systemctl start comfyui.service, /bin/systemctl stop comfyui.service, /bin/systemctl restart comfyui.service, /bin/systemctl is-active comfyui.service" | sudo tee -a /etc/sudoers.d/ai-manager >/dev/null
+	@echo "$(SERVICE_USER) ALL=(ALL) NOPASSWD: /bin/systemctl start sdwebui.service, /bin/systemctl stop sdwebui.service, /bin/systemctl restart sdwebui.service, /bin/systemctl is-active sdwebui.service" | sudo tee -a /etc/sudoers.d/ai-manager >/dev/null
+	@echo "Sudoers file created at /etc/sudoers.d/ai-manager."
+	@echo "Validating sudoers file..."
+	@sudo visudo -c || (echo "Sudoers validation failed. Please check the syntax." && exit 1)
 
-# Combined target to create the user and update sudoers
-setup_ai_manager_user: create_ai_manager_user update_sudoers
-	@echo "$(SERVICE_USER) added user setup complete."
+# Combined target to create the user, group, update sudoers, and set permissions
+setup_ai_manager_user: create_ai_manager_user create_sudoers_file set_permissions
+	@echo "$(SERVICE_USER) user setup complete with sudo permissions."
 
 
 
