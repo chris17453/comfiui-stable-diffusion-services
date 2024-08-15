@@ -1,155 +1,78 @@
+### Updated README Based on the Makefile:
+
 # ComfyUI and Stable Diffusion Web UI Setup
 
-This repository contains the necessary configuration files and a setup script to install and run both ComfyUI and Stable Diffusion Web UI (AUTOMATIC1111) on your server. The setup includes systemd service files and an Nginx configuration for remote access.
+This repository provides the necessary configuration files and a setup script to install and manage both ComfyUI and Stable Diffusion Web UI (AUTOMATIC1111) on your server. The setup includes systemd service files and an Nginx configuration for remote access.
 
 ## Table of Contents
-
 - [Overview](#overview)
-- [Setup Process](#setup-process)
-- [Configuration Changes](#configuration-changes)
-- [How to Use](#how-to-use)
-- [Troubleshooting](#troubleshooting)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Configuration](#configuration)
+- [Security](#security)
+- [Internal Utilities](#internal-utilities)
+
+
+## AI Manager App
+![AI Manager](assets/ai-manager.png)
 
 ## Overview
+This repository automates the installation and configuration of ComfyUI, Stable Diffusion Web UI, and related services.
 
-This setup allows you to run either ComfyUI or Stable Diffusion Web UI on your server, with Nginx acting as a reverse proxy to make them accessible remotely. Both services are managed by systemd, ensuring they start automatically at boot and restart if they fail.
+## Configuration
+### Variables
+Before running any of the Makefile commands, you may need to configure the following variables to suit your environment. These variables are located at the top of the Makefile:
 
-### Important Note: 
-- **Only one UI service can run at a time** due to port conflicts and resource contention (CUDA), though if you want both.. let me know and I'll update the script.
-- **Customization Required**: The provided script and configuration files contain placeholders that you need to update to match your specific environment.
+- SD_WEBUI_REPO: URL of the Stable Diffusion Web UI repository. Default: https://github.com/AUTOMATIC1111/stable-diffusion-webui.git
+- COMFYUI_REPO: URL of the ComfyUI repository. Default: https://github.com/comfyanonymous/ComfyUI.git
+- APP_SOURCE_DIR: Directory path to the AI manager application source code. Default: ./ai_manager
+- INSTALL_DIR: The directory where applications will be installed. Default: /opt/AI
+- SERVER_NAME: The server name or domain to be configured in Nginx. Default: gpu2.watkinslabs.com
+- SERVICE_USER: The user account that will manage the services. Default: ai-manager
+- SERVICE_GROUP: The group that will have access to the services. Default: www-data
+- To customize these variables, simply edit the values in the Makefile before running the setup commands.
 
+## Installation
+To install and set up everything, use the following command:
 
-## Setup Process
+### Main Command:
+- `make all`: This command will download, install, and build all necessary services and applications, including ComfyUI, Stable Diffusion Web UI, and associated configurations.
 
-### 1. Clone the Repository
+### Additional Installation:
+- `make install`: Install all the applications without setting up services.
+- `make setup`: Configure systemd services and Nginx.
 
-First, clone this repository to your server:
+## Usage
+Manage the services using the following commands:
 
-```bash
-git clone https://github.com/yourusername/comfiui-stable-diffusion-services.git 
-cd comfiui-stable-diffusion-services
-```
+### AI-Manager:
+- `make enable_ai_manager`: Enable `ai_manager` on boot.
+- `make disable_ai_manager`: Disable the `ai_manager` service.
+- `make start_ai_manager`: Start the `ai_manager` service.
+- `make stop_ai_manager`: Stop the `ai_manager` service.
 
-### 2. Run the Setup Script
+### Stable Diffusion:
+- `make enable_sdwebui`: Enable Stable Diffusion Web UI (and disable ComfyUI).
 
-The setup script will:
+### ComfyUI:
+- `make enable_comfyui`: Enable ComfyUI (and disable Stable Diffusion Web UI).
 
-- Clone the ComfyUI and Stable Diffusion Web UI repositories.
-- Set up Python virtual environments (venvs) for both.
-- Copy and configure the systemd service files.
-- Install and configure Nginx.
+### Global:
+- `make disable_services`: Disable both `sdwebui` and `comfyui` services.
+- `make stop_services`: Stop all services.
 
-To run the script, make it executable and execute it:
+## Configuration
+### Nginx:
+- `make configure_nginx`: Configure Nginx with the specified `SERVER_NAME`.
 
-```bash
-chmod +x setup.sh
-./setup.sh
-```
+## Internal Utilities
+These commands are used during setup and generally should not be invoked directly:
 
-### 3. Enter Your Server Name
-
-When prompted by the setup script, enter your server name (e.g., `gpu2.watkinslabs.com`). This will configure Nginx to use your specified server name.
-
-### 4. Verify the Setup
-
-Once the script completes, open your web browser and navigate to your domain or IP address (e.g., `http://gpu2.watkinslabs.com`) to ensure the UI is accessible.
-
-## Configuration Changes
-
-### 1. Customize Service Files
-
-The service files located in the `/etc/systemd/system/` directory contain placeholders that must be updated, setup script does this for you, but a manual edit works as well.
-
-- **INSTALL_DIR**: Replace this placeholder in the service files with the actual path where you installed the services.
-
-
-Example:
-
-```bash
-sudo sed -i "s|INSTALL_DIR|/home/your_username|g" /etc/systemd/system/sdwebui.service
-sudo sed -i "s|INSTALL_DIR|/home/your_username|g" /etc/systemd/system/comfyui.service
-```
-
-### 2. Nginx Configuration
-
-The Nginx configuration file (`nginx/nginx.conf`) contains a placeholder for your server name, setup.sh does this for you but you can change it manualy as well.:
-
-- **SERVER_NAME**: This placeholder will be replaced by the setup script based on your input.
-
-Example:
-
-```bash
-sudo sed -i "s|SERVER_NAME|yourdomain.com|g" /etc/nginx/nginx.conf
-```
-
-## How to Use
-
-### Start and Enable the Services
-
-Once the script has been executed and configuration files updated, you can start and enable the services:
-
-For Stable Diffusion Web UI:
-
-```bash
-sudo systemctl start sdwebui.service
-sudo systemctl enable sdwebui.service
-```
-
-For ComfyUI:
-
-```bash
-sudo systemctl start comfyui.service
-sudo systemctl enable comfyui.service
-```
-
-### Switching Between Services
-
-To switch between Stable Diffusion Web UI and ComfyUI, stop the currently running service and start the other:
-
-```bash
-sudo systemctl stop sdwebui.service
-sudo systemctl start comfyui.service
-```
-
-Repeat the process as needed to switch back.
-
-## Troubleshooting
-
-- **Service Fails to Start**: Check the service status with `sudo systemctl status sdwebui.service` or `sudo systemctl status comfyui.service` to see any error messages.
-- **Web UI Not Loading**: Ensure Nginx is running and the services are active. Check Nginx logs in `/var/log/nginx/error.log`.
-- **Permission Issues**: Ensure that the services are running under the correct user and that the directories have the necessary permissions.
+- `make create_user_group`: Create the necessary user and group.
+- `make create_sudoers_file`: Create a sudoers file for the service user.
+- `make set_permissions`: Set permissions for the installation directory.
 
 
-## Logs
+## Security
 
-Logs for both services and Nginx are stored in the `/var/log/` directory. These logs are useful for troubleshooting any issues that arise.
-
-### Stable Diffusion Web UI Logs
-
-- **Standard Output**: `/var/log/sdwebui.log`
-- **Standard Error**: `/var/log/sdwebui.log`
-
-### ComfyUI Logs
-
-- **Standard Output**: `/var/log/comfyui.log`
-- **Standard Error**: `/var/log/comfyui.log`
-
-### Nginx Logs
-
-- **Error Log**: `/var/log/nginx/error.log`
-- **Access Log**: `/var/log/nginx/access.log`
-
-To view the logs, you can use the `cat`, `less`, or `tail -f` commands. For example:
-
-```bash
-# View the latest logs for Stable Diffusion Web UI
-tail -f /var/log/sdwebui.log
-
-# View the latest logs for ComfyUI
-tail -f /var/log/comfyui.log
-
-# View Nginx error logs
-tail -f /var/log/nginx/error.log
-```
-
-
+During the installation process, a user and group are created, and sudoers rules are set up to restrict access. The service user ai-manager is configured to only access service-related commands for the specific services installed (AI-Manager, Stable Diffusion Web UI, and ComfyUI). This ensures that the user has limited privileges, enhancing the security of the system.
