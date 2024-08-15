@@ -17,7 +17,7 @@ help:
 	@echo "    install_comfyui      Install ComfyUI"
 	@echo "    install_services     Install and configure systemd services"
 	@echo "    install_nginx        Install Nginx"
-	@echo "    copy_app             Copy the ai_manager app to the installation directory"
+	@echo "    install_ai_manager   install the python web app ai_manager app to the installation directory"
 	@echo "    configure_nginx      Configure Nginx"
 	@echo "    create_install_dir   Create the installation directory if it doesn't exist"
 	@echo "  AI-Manager"
@@ -46,9 +46,18 @@ create_install_dir:
 
 
 # Copy the ai_manager app to the installation directory
-copy_app: create_install_dir
+install_ai_manager: create_install_dir
 	@echo "Copying ai_manager app to $(INSTALL_DIR)..."
 	rsync -av --exclude='venv' $(APP_SOURCE_DIR)/ $(INSTALL_DIR)/ai_manager/
+	$(MAKE) setup_ai_manager_venv
+
+
+# Set up virtual environment for ai_manager and install Flask
+setup_ai_manager_venv: create_install_dir
+	@echo "Setting up venv for ai_manager..."
+	python3 -m venv $(INSTALL_DIR)/ai_manager/venv
+	@echo "Installing Flask in ai_manager venv..."
+	$(INSTALL_DIR)/ai_manager/venv/bin/pip install Flask
 
 
 # Install Stable Diffusion Web UI
@@ -66,7 +75,7 @@ install_comfyui: create_install_dir
 	cd $(INSTALL_DIR)/comfyui && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt && deactivate
 
 # Install and configure services
-install_services: copy_app
+install_services: install_ai_manager
 	@echo "Configuring systemd services..."
 	sudo cp etc/systemd/system/sdwebui.service /etc/systemd/system/
 	sudo cp etc/systemd/system/comfyui.service /etc/systemd/system/
