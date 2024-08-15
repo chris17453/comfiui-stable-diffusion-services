@@ -10,10 +10,10 @@ Restart=always
 RestartSec=1
 User=SERVICE_USER
 Group=SERVICE_GROUP
-ExecStart=/bin/bash /home/your_username/stable-diffusion-webui/webui.sh --theme=dark --api --disable-safe-unpickle
+ExecStart=/bin/bash INSTALL_DIR/stable-diffusion-webui/webui.sh --theme=dark --api --disable-safe-unpickle
 StandardOutput=append:/var/log/sdwebui.log
 StandardError=append:/var/log/sdwebui.log
-WorkingDirectory=/home/your_username/stable-diffusion-webui/
+WorkingDirectory=INSTALL_DIR/stable-diffusion-webui/
 
 [Install]
 WantedBy=multi-user.target
