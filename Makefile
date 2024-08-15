@@ -105,8 +105,8 @@ install_sdwebui: create_install_dir
 	@-git clone $(SD_WEBUI_REPO) $(INSTALL_DIR)/stable-diffusion-webui
 	@echo "Setting up venv for Stable Diffusion Web UI..."
 	@cd $(INSTALL_DIR)/stable-diffusion-webui && python3 -m venv venv
-	@source venv/bin/activate && pip install --pre torch torchvision torchaudio --index-url $(CUDA_TORCH)  && deactivate
-	@source venv/bin/activate && pip install -r requirements.txt && deactivate
+	@cd $(INSTALL_DIR)/stable-diffusion-webui && source venv/bin/activate && pip install --pre torch torchvision torchaudio --index-url $(CUDA_TORCH)  && deactivate
+	@cd $(INSTALL_DIR)/stable-diffusion-webui && source venv/bin/activate && pip install -r requirements.txt && deactivate
 	@$(MAKE) set_permissions  
 
 # Install ComfyUI
@@ -115,8 +115,8 @@ install_comfyui: create_install_dir
 	@-git clone $(COMFYUI_REPO) $(INSTALL_DIR)/comfyui
 	@echo "Setting up venv for ComfyUI..."
 	@cd $(INSTALL_DIR)/comfyui && python3 -m venv venv 
-	@source venv/bin/activate && pip install --pre torch torchvision torchaudio --index-url $(CUDA_TORCH)  && deactivate
-	@source venv/bin/activate &&pip install -r requirements.txt && deactivate
+	@cd $(INSTALL_DIR)/comfyui && source venv/bin/activate && pip install --pre torch torchvision torchaudio --index-url $(CUDA_TORCH)  && deactivate
+	@cd $(INSTALL_DIR)/comfyui && source venv/bin/activate && pip install -r requirements.txt && deactivate
 	@$(MAKE) set_permissions  
 
 install: install_nginx install_sdwebui install_comfyui 
