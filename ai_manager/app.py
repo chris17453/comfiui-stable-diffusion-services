@@ -16,7 +16,7 @@ def index():
     sd_status = check_service_status('sdwebui.service')
     return render_template('index.html', comfyui_status=comfyui_status, sd_status=sd_status)
 
-@app.route('/ai_manager/activate/<service_name>')
+@app.route('/activate/<service_name>')
 def activate(service_name):
     if service_name == 'comfyui':
         activate_service('comfyui.service')
