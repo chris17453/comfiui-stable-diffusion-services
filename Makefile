@@ -100,7 +100,7 @@ setup_ai_manager_venv: create_install_dir
 # Install Stable Diffusion Web UI
 install_sdwebui: create_install_dir
 	@echo "Cloning Stable Diffusion Web UI..."
-	@git clone $(SD_WEBUI_REPO) $(INSTALL_DIR)/stable-diffusion-webui
+	@-git clone $(SD_WEBUI_REPO) $(INSTALL_DIR)/stable-diffusion-webui
 	@echo "Setting up venv for Stable Diffusion Web UI..."
 	@cd $(INSTALL_DIR)/stable-diffusion-webui && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt && deactivate
 	@$(MAKE) set_permissions  
@@ -108,7 +108,7 @@ install_sdwebui: create_install_dir
 # Install ComfyUI
 install_comfyui: create_install_dir
 	@echo "Cloning ComfyUI..."
-	@git clone $(COMFYUI_REPO) $(INSTALL_DIR)/comfyui
+	@-git clone $(COMFYUI_REPO) $(INSTALL_DIR)/comfyui
 	@echo "Setting up venv for ComfyUI..."
 	@cd $(INSTALL_DIR)/comfyui && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt && deactivate
 	@$(MAKE) set_permissions  
