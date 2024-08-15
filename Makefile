@@ -189,3 +189,7 @@ update_sudoers:
 # Combined target to create the user and update sudoers
 setup_ai_manager_user: create_ai_manager_user update_sudoers
 	@echo "ai_manager user setup complete."
+
+
+
+setup: install_services configure_nginx
