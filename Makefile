@@ -105,7 +105,8 @@ install_sdwebui: create_install_dir
 	@-git clone $(SD_WEBUI_REPO) $(INSTALL_DIR)/stable-diffusion-webui
 	@echo "Setting up venv for Stable Diffusion Web UI..."
 	@cd $(INSTALL_DIR)/stable-diffusion-webui && python3 -m venv venv
-	@cd $(INSTALL_DIR)/stable-diffusion-webui && source venv/bin/activate && pip install --pre torch torchvision torchaudio --index-url $(CUDA_TORCH)  && deactivate
+#	@cd $(INSTALL_DIR)/stable-diffusion-webui && source venv/bin/activate && pip install --pre torch torchvision torchaudio --index-url $(CUDA_TORCH)  && deactivate
+	@cd $(INSTALL_DIR)/stable-diffusion-webui && source venv/bin/activate && pip install xformers
 	@cd $(INSTALL_DIR)/stable-diffusion-webui && source venv/bin/activate && pip install -r requirements.txt && deactivate
 	@$(MAKE) set_permissions  
 
