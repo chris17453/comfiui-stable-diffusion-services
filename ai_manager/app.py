@@ -1,5 +1,6 @@
 import gradio as gr
 import subprocess
+import time
 
 # Function to check service status
 def check_service_status(service_name):
