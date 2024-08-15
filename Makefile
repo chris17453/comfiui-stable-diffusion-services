@@ -185,9 +185,10 @@ disable_services:
 	@echo "Disabling both sdwebui and comfyui services..."
 	sudo systemctl disable sdwebui.service
 	sudo systemctl disable comfyui.service
-
-# Create ai_manager user and add to www-data group
+# Create the group if it doesn't exist and create ai_manager user
 create_ai_manager_user:
+	@echo "Creating $(SERVICE_GROUP) group if it doesn't exist..."
+	sudo groupadd -f $(SERVICE_GROUP)
 	@echo "Creating $(SERVICE_USER) user and adding to $(SERVICE_GROUP)..."
 	sudo useradd -m -s /bin/bash $(SERVICE_USER) || echo "User $(SERVICE_USER) already exists."
 	sudo usermod -aG $(SERVICE_GROUP) $(SERVICE_USER)
