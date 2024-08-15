@@ -1,0 +1,18 @@
+[Unit]
+Description=Stable Diffusion AUTOMATIC1111 Web UI service
+After=network.target
+StartLimitIntervalSec=0
+Conflicts=comfyui.service
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=nd
+ExecStart=/bin/bash /home/your_username/stable-diffusion-webui/webui.sh --theme=dark --api --disable-safe-unpickle
+StandardOutput=append:/var/log/sdwebui.log
+StandardError=append:/var/log/sdwebui.log
+WorkingDirectory=/home/your_username/stable-diffusion-webui/
+
+[Install]
+WantedBy=multi-user.target

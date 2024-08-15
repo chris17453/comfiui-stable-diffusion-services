@@ -1,0 +1,20 @@
+
+[Unit]
+Description=ComfyUI Service
+After=network.target
+StartLimitIntervalSec=0
+Conflicts=sdwebui.service
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=nd
+ExecStart=INSTALL_DIR/ComfyUI/venv/bin/python INSTALL_DIR/comfyui/main.py --port 7860
+StandardOutput=append:/var/log/comfyui.log
+StandardError=append:/var/log/comfyui.log
+WorkingDirectory=INSTALL_DIR/comfyui/
+
+[Install]
+WantedBy=multi-user.target
+
