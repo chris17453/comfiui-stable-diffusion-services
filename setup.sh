@@ -33,12 +33,14 @@ deactivate
 
 # Copy and configure systemd services
 echo "Configuring systemd services..."
-sudo cp system/sdwebui.service /etc/systemd/system/
-sudo cp system/comfyui.service /etc/systemd/system/
+sudo cp etc/system/sdwebui.service /etc/systemd/system/
+sudo cp etc/system/comfyui.service /etc/systemd/system/
+sudo cp etc/system/ai_manager.service /etc/systemd/system/
 
 # Replace placeholders in service files
 sudo sed -i "s|INSTALL_DIR|$INSTALL_DIR|g" /etc/systemd/system/sdwebui.service
 sudo sed -i "s|INSTALL_DIR|$INSTALL_DIR|g" /etc/systemd/system/comfyui.service
+sudo sed -i "s|INSTALL_DIR|$INSTALL_DIR|g" /etc/systemd/system/ai_manager.service
 
 sudo systemctl daemon-reload
 
@@ -75,7 +77,11 @@ fi
 
 # reload the services because they've been changed
 sudo systemctl daemon-reload
+## start on boot
+sudo systemctl enable ai_manager.service
+
 
 echo "Setup complete! Use the following commands to start services:"
+echo "sudo systemctl start ai_manager.service"
 echo "sudo systemctl start sdwebui.service"
 echo "sudo systemctl start comfyui.service"

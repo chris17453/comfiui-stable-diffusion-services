@@ -1,0 +1,13 @@
+[Unit]
+Description=AI Manager Flask App Service
+After=network.target
+
+[Service]
+User=your_username
+Group=www-data
+WorkingDirectory=INSTALL_DIR/ai_manager
+ExecStart=/usr/bin/python3 INSTALL_DIR/app.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
