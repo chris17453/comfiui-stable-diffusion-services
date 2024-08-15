@@ -7,7 +7,23 @@ APP_SOURCE_DIR=./ai_manager
 
 .PHONY: all install_services install_sdwebui install_comfyui install_nginx configure_nginx start_services stop_services enable_sdwebui enable_comfyui disable_services
 
-all: install_sdwebui install_comfyui install_services install_nginx configure_nginx
+# Default target: Display help message
+help:
+	@echo "Usage: make [TARGET]"
+	@echo ""
+	@echo "Available targets:"
+	@echo "  install_sdwebui      Install Stable Diffusion Web UI"
+	@echo "  install_comfyui      Install ComfyUI"
+	@echo "  install_services     Install and configure systemd services"
+	@echo "  install_nginx        Install Nginx"
+	@echo "  configure_nginx      Configure Nginx"
+	@echo "  start_services       Start all services"
+	@echo "  stop_services        Stop all services"
+	@echo "  enable_sdwebui       Enable Stable Diffusion Web UI (and disable ComfyUI)"
+	@echo "  enable_comfyui       Enable ComfyUI (and disable Stable Diffusion Web UI)"
+	@echo "  disable_services     Disable both sdwebui and comfyui services"
+	@echo "  copy_app             Copy the ai_manager app to the installation directory"
+ 	@echo "  create_install_dir   Create the installation directory if it doesn't exist"
 
 
 # Create the installation directory if it doesn't exist
@@ -43,9 +59,9 @@ install_comfyui: create_install_dir
 # Install and configure services
 install_services: copy_app
 	@echo "Configuring systemd services..."
-	sudo cp etc/system/sdwebui.service /etc/systemd/system/
-	sudo cp etc/system/comfyui.service /etc/systemd/system/
-	sudo cp etc/system/ai_manager.service /etc/systemd/system/
+	sudo cp etc/systemd/system/sdwebui.service /etc/systemd/system/
+	sudo cp etc/systemd/system/comfyui.service /etc/systemd/system/
+	sudo cp etc/systemd/system/ai_manager.service /etc/systemd/system/
 	sudo sed -i "s|INSTALL_DIR|$(INSTALL_DIR)|g" /etc/systemd/system/sdwebui.service
 	sudo sed -i "s|INSTALL_DIR|$(INSTALL_DIR)|g" /etc/systemd/system/comfyui.service
 	sudo sed -i "s|INSTALL_DIR|$(INSTALL_DIR)|g" /etc/systemd/system/ai_manager.service
