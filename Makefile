@@ -135,7 +135,6 @@ install_services: install_ai_manager
 # Install Nginx
 install_nginx:
 	@echo "Installing Nginx..."
-	@dnf update
 	@dnf install -y nginx
 
 # Configure Nginx
