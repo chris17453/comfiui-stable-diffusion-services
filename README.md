@@ -14,7 +14,7 @@ This repository provides the necessary configuration files and a setup script to
 
 
 ## AI Manager App
-![AI Manager](assets/ai-manager.png)
+![AI Manager](assets/ai-manager.gif)
 
 ## Overview
 This repository automates the installation and configuration of ComfyUI, Stable Diffusion Web UI, and related services.
