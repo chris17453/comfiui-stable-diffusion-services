@@ -42,32 +42,47 @@ To install and set up everything, use the following command:
 - `make install`: Install all the applications without setting up services.
 - `make setup`: Configure systemd services and Nginx.
 
+### Services created
+
+The following systemd services are set up as part of the installation:
+
+- **AI-Manager Service**: 
+  - **Service Name**: `ai_manager.service`
+  - **Description**: This service manages the AI-Manager web application, which allows you to switch between Stable Diffusion and ComfyUI via the web interface.
+
+- **Stable Diffusion Web UI Service**:
+  - **Service Name**: `sdwebui.service`
+  - **Description**: This service manages the Stable Diffusion Web UI (AUTOMATIC1111), enabling you to use Stable Diffusion via a web interface.
+
+- **ComfyUI Service**:
+  - **Service Name**: `comfyui.service`
+  - **Description**: This service manages ComfyUI, another web interface for Stable Diffusion.
+
+- **Nginx Service**:
+  - **Service Name**: `nginx.service`
+  - **Description**: This service handles the web server configuration, enabling remote access to the AI Manager, Stable Diffusion, and ComfyUI through a web interface.
+
+These services are managed using systemd commands (`start`, `stop`, `enable`, `disable`) and can be controlled either via the command line or the AI Manager web interface.
 ## Usage
+
+### From the Web Browser:
+You can access the AI Manager interface through your web browser by navigating to the following URL:
+
+- http://<your-server-address>/ai_manager
+
+This web interface allows you to switch between Stable Diffusion Web UI and ComfyUI services, and manage the AI-Manager service.
 Manage the services using the following commands:
 
-### AI-Manager:
+### CLI:
 - `make enable_ai_manager`: Enable `ai_manager` on boot.
 - `make disable_ai_manager`: Disable the `ai_manager` service.
 - `make start_ai_manager`: Start the `ai_manager` service.
 - `make stop_ai_manager`: Stop the `ai_manager` service.
-
-### Stable Diffusion:
 - `make enable_sdwebui`: Enable Stable Diffusion Web UI (and disable ComfyUI).
-
-### ComfyUI:
 - `make enable_comfyui`: Enable ComfyUI (and disable Stable Diffusion Web UI).
-
-### Global:
 - `make disable_services`: Disable both `sdwebui` and `comfyui` services.
 - `make stop_services`: Stop all services.
-
-## Configuration
-### Nginx:
 - `make configure_nginx`: Configure Nginx with the specified `SERVER_NAME`.
-
-## Internal Utilities
-These commands are used during setup and generally should not be invoked directly:
-
 - `make create_user_group`: Create the necessary user and group.
 - `make create_sudoers_file`: Create a sudoers file for the service user.
 - `make set_permissions`: Set permissions for the installation directory.
