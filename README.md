@@ -35,6 +35,7 @@ Before running any of the Makefile commands, you may need to configure the follo
 ## Installation
 To install and set up everything, use the following command:
 - the curent base dir is home/ai-manager/apps
+- my server has a BIG partiotn for home.. not root so thats where I'm dumping this. You can change
 
 ### Main Command:
 - `sudo make all`: This command will download, install, and build all necessary services and applications, including ComfyUI, Stable Diffusion Web UI, and associated configurations.
