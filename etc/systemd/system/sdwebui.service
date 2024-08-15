@@ -8,7 +8,8 @@ Conflicts=comfyui.service
 Type=simple
 Restart=always
 RestartSec=1
-User=nd
+User=SERVICE_USER
+Group=SERVICE_GROUP
 ExecStart=/bin/bash /home/your_username/stable-diffusion-webui/webui.sh --theme=dark --api --disable-safe-unpickle
 StandardOutput=append:/var/log/sdwebui.log
 StandardError=append:/var/log/sdwebui.log

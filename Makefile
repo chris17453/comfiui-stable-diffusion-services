@@ -1,9 +1,11 @@
 # Variables
-INSTALL_DIR=/opt/AI/
 SD_WEBUI_REPO=https://github.com/AUTOMATIC1111/stable-diffusion-webui.git
 COMFYUI_REPO=https://github.com/comfyanonymous/ComfyUI.git
-SERVER_NAME=gpu2.watkinslabs.com
 APP_SOURCE_DIR=./ai_manager
+INSTALL_DIR=/opt/AI/
+SERVER_NAME=gpu2.watkinslabs.com
+SERVICE_USER=ai-manager
+SERVICE_GROUP=www-data
 
 .PHONY: all install_services install_sdwebui install_comfyui install_nginx configure_nginx  stop_services enable_sdwebui enable_comfyui disable_services
 
@@ -32,6 +34,8 @@ help:
 	@echo "  Global "
 	@echo "    disable_services     Disable both sdwebui and comfyui services"
 	@echo "    stop_services        Stop all 3 services"
+	@echo "    setup_ai_manager     Create the user , group , update sudoers"
+
 
 
 
@@ -83,6 +87,13 @@ install_services: install_ai_manager
 	sudo sed -i "s|INSTALL_DIR|$(INSTALL_DIR)|g" /etc/systemd/system/sdwebui.service
 	sudo sed -i "s|INSTALL_DIR|$(INSTALL_DIR)|g" /etc/systemd/system/comfyui.service
 	sudo sed -i "s|INSTALL_DIR|$(INSTALL_DIR)|g" /etc/systemd/system/ai_manager.service
+	sudo sed -i "s|SERVICE_USER|$(SERVICE_USER)|g" /etc/systemd/system/sdwebui.service
+	sudo sed -i "s|SERVICE_USER|$(SERVICE_USER)|g" /etc/systemd/system/comfyui.service
+	sudo sed -i "s|SERVICE_USER|$(SERVICE_USER)|g" /etc/systemd/system/ai_manager.service
+	sudo sed -i "s|SERVICE_GROUP|$(SERVICE_GROUP)|g" /etc/systemd/system/sdwebui.service
+	sudo sed -i "s|SERVICE_GROUP|$(SERVICE_GROUP)|g" /etc/systemd/system/comfyui.service
+	sudo sed -i "s|SERVICE_GROUP|$(SERVICE_GROUP)|g" /etc/systemd/system/ai_manager.service
+	
 	sudo systemctl daemon-reload
 
 # Install Nginx
@@ -161,3 +172,20 @@ disable_services:
 	@echo "Disabling both sdwebui and comfyui services..."
 	sudo systemctl disable sdwebui.service
 	sudo systemctl disable comfyui.service
+
+# Create ai_manager user and add to www-data group
+create_ai_manager_user:
+	@echo "Creating ai_manager user and adding to www-data group..."
+	sudo useradd -m -s /bin/bash ai_manager || echo "User ai_manager already exists."
+	sudo usermod -aG www-data ai_manager
+	@echo "User ai_manager created and added to www-data group."
+
+# Update sudoers file to allow ai_manager to run necessary commands without a password
+update_sudoers:
+	@echo "Updating sudoers file..."
+	@echo "ai_manager ALL=(ALL) NOPASSWD: /bin/systemctl start comfyui.service, /bin/systemctl start sdwebui.service, /bin/systemctl is-active" | sudo EDITOR='tee -a' visudo
+	@echo "Sudoers file updated successfully."
+
+# Combined target to create the user and update sudoers
+setup_ai_manager_user: create_ai_manager_user update_sudoers
+	@echo "ai_manager user setup complete."

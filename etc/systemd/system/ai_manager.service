@@ -3,8 +3,8 @@ Description=AI Manager Flask App Service
 After=network.target
 
 [Service]
-User=your_username
-Group=www-data
+User=SERVICE_USER
+Group=SERVICE_GROUP
 WorkingDirectory=INSTALL_DIR/ai_manager
 ExecStart=INSTALL_DIR/ai_manager/venv/bin/python INSTALL_DIR/ai_manager/app.py
 Restart=always

@@ -4,11 +4,11 @@ import subprocess
 app = Flask(__name__)
 
 def check_service_status(service_name):
-    result = subprocess.run(['systemctl', 'is-active', service_name], stdout=subprocess.PIPE)
+    result = subprocess.run(['sudo', 'systemctl', 'is-active', service_name], stdout=subprocess.PIPE)
     return result.stdout.decode('utf-8').strip()
 
 def activate_service(service_name):
-    subprocess.run(['systemctl', 'start', service_name])
+    subprocess.run(['sudo', 'systemctl', 'start', service_name])
 
 @app.route('/')
 def index():
