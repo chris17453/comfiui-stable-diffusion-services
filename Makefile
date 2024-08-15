@@ -35,7 +35,7 @@ help:
 	@echo "      enable_sdwebui       Enable Stable Diffusion Web UI (and disable ComfyUI)"
 	@echo "    ComfyUI "
 	@echo "      enable_comfyui       Enable ComfyUI (and disable Stable Diffusion Web UI)"
-    @echo "    Global "
+	@echo "    Global "
 	@echo "      disable_services     Disable both sdwebui and comfyui services"
 	@echo "      stop_services        Stop all 3 services"
 
