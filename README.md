@@ -5,7 +5,6 @@ This repository contains the necessary configuration files and a setup script to
 ## Table of Contents
 
 - [Overview](#overview)
-- [File Structure](#file-structure)
 - [Setup Process](#setup-process)
 - [Configuration Changes](#configuration-changes)
 - [How to Use](#how-to-use)
@@ -16,7 +15,7 @@ This repository contains the necessary configuration files and a setup script to
 This setup allows you to run either ComfyUI or Stable Diffusion Web UI on your server, with Nginx acting as a reverse proxy to make them accessible remotely. Both services are managed by systemd, ensuring they start automatically at boot and restart if they fail.
 
 ### Important Note: 
-- **Only one UI service can run at a time** due to port conflicts.
+- **Only one UI service can run at a time** due to port conflicts and resource contention (CUDA), though if you want both.. let me know and I'll update the script.
 - **Customization Required**: The provided script and configuration files contain placeholders that you need to update to match your specific environment.
 
 
