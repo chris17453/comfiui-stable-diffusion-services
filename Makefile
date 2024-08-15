@@ -72,11 +72,11 @@ install_nginx:
 	@echo "Installing Nginx..."
 	sudo apt update
 	sudo apt install -y nginx
-	
+
 # Configure Nginx
 configure_nginx:
 	@echo "Checking if Nginx configuration exists..."
-	if [ -f /etc/nginx/nginx.conf ]; then \
+	@if [ -f /etc/nginx/nginx.conf ]; then \
 		echo "Backing up existing Nginx configuration..."; \
 		sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak; \
 	else \
@@ -87,7 +87,7 @@ configure_nginx:
 	sudo sed -i "s|SERVER_NAME|$(SERVER_NAME)|g" /etc/nginx/nginx.conf
 	@echo "Testing Nginx configuration..."
 	sudo nginx -t
-	if [ $$? -eq 0 ]; then \
+	@if [ $$? -eq 0 ]; then \
 		echo "Restarting Nginx..."; \
 		sudo systemctl restart nginx; \
 		echo "Nginx configuration applied successfully."; \
