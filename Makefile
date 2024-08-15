@@ -5,25 +5,34 @@ COMFYUI_REPO=https://github.com/comfyanonymous/ComfyUI.git
 SERVER_NAME=gpu2.watkinslabs.com
 APP_SOURCE_DIR=./ai_manager
 
-.PHONY: all install_services install_sdwebui install_comfyui install_nginx configure_nginx start_services stop_services enable_sdwebui enable_comfyui disable_services
+.PHONY: all install_services install_sdwebui install_comfyui install_nginx configure_nginx  stop_services enable_sdwebui enable_comfyui disable_services
 
 # Default target: Display help message
 help:
 	@echo "Usage: make [TARGET]"
 	@echo ""
 	@echo "Available targets:"
-	@echo "  install_sdwebui      Install Stable Diffusion Web UI"
-	@echo "  install_comfyui      Install ComfyUI"
-	@echo "  install_services     Install and configure systemd services"
-	@echo "  install_nginx        Install Nginx"
-	@echo "  configure_nginx      Configure Nginx"
-	@echo "  start_services       Start all services"
-	@echo "  stop_services        Stop all services"
-	@echo "  enable_sdwebui       Enable Stable Diffusion Web UI (and disable ComfyUI)"
-	@echo "  enable_comfyui       Enable ComfyUI (and disable Stable Diffusion Web UI)"
-	@echo "  disable_services     Disable both sdwebui and comfyui services"
-	@echo "  copy_app             Copy the ai_manager app to the installation directory"
-	@echo "  create_install_dir   Create the installation directory if it doesn't exist"
+	@echo "  Install:"
+	@echo "    install_sdwebui      Install Stable Diffusion Web UI"
+	@echo "    install_comfyui      Install ComfyUI"
+	@echo "    install_services     Install and configure systemd services"
+	@echo "    install_nginx        Install Nginx"
+	@echo "    copy_app             Copy the ai_manager app to the installation directory"
+	@echo "    configure_nginx      Configure Nginx"
+	@echo "    create_install_dir   Create the installation directory if it doesn't exist"
+	@echo "  AI-Manager"
+	@echo "    enable_ai_manager    Enable ai_manager on boot (web app for switching)"
+	@echo "    disable_ai_manager   Disable the ai_manager service"
+	@echo "    start_ai_manager     Start the ai_manager service"
+	@echo "    stop_ai_manager      Stop the ai_manager service"
+	@echo "  Stable Diffusion "
+	@echo "    enable_sdwebui       Enable Stable Diffusion Web UI (and disable ComfyUI)"
+	@echo "  ComfyUI "
+	@echo "    enable_comfyui       Enable ComfyUI (and disable Stable Diffusion Web UI)"
+	@echo "  Global "
+	@echo "    disable_services     Disable both sdwebui and comfyui services"
+	@echo "    stop_services        Stop all 3 services"
+
 
 
 # Create the installation directory if it doesn't exist
@@ -102,10 +111,24 @@ configure_nginx:
 		fi \
 	fi
 
-# Start services
-start_services:
+# Enable ai manager
+enable_ai_manager:
+	sudo systemctl enable ai_manager.service
+	
+# Start ai_manager
+start_ai_manager:
 	@echo "Starting ai_manager service..."
 	sudo systemctl start ai_manager.service
+
+# Stop ai_manager 
+stop_ai_manager:
+	@echo "Starting ai_manager service..."
+	sudo systemctl stop ai_manager.service
+
+# Stop ai_manager 
+disable_ai_manager:
+	@echo "Disabeling ai_manager service..."
+	sudo systemctl disable ai_manager.service
 
 # Stop services
 stop_services:
@@ -114,21 +137,15 @@ stop_services:
 	sudo systemctl stop sdwebui.service
 	sudo systemctl stop comfyui.service
 
-# Enable Stable Diffusion Web UI (and disable ComfyUI)
+# Enable Stable Diffusion Web UI
 enable_sdwebui: stop_services
 	@echo "Enabling sdwebui service and disabling comfyui service..."
-	sudo systemctl disable comfyui.service
-	sudo systemctl enable sdwebui.service
 	sudo systemctl start sdwebui.service
-	sudo systemctl enable ai_manager.service
 
-# Enable ComfyUI (and disable Stable Diffusion Web UI)
+# Enable ComfyUI 
 enable_comfyui: stop_services
 	@echo "Enabling comfyui service and disabling sdwebui service..."
-	sudo systemctl disable sdwebui.service
-	sudo systemctl enable comfyui.service
 	sudo systemctl start comfyui.service
-	sudo systemctl enable ai_manager.service
 
 # Disable both sdwebui and comfyui services
 disable_services:
