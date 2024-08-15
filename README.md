@@ -34,13 +34,14 @@ Before running any of the Makefile commands, you may need to configure the follo
 
 ## Installation
 To install and set up everything, use the following command:
+- the curent base dir is home/ai-manager/apps
 
 ### Main Command:
-- `make all`: This command will download, install, and build all necessary services and applications, including ComfyUI, Stable Diffusion Web UI, and associated configurations.
+- `sudo make all`: This command will download, install, and build all necessary services and applications, including ComfyUI, Stable Diffusion Web UI, and associated configurations.
 
 ### Additional Installation:
-- `make install`: Install all the applications without setting up services.
-- `make setup`: Configure systemd services and Nginx.
+- `sudo make install`: Install all the applications without setting up services.
+- `sudo make setup`: Configure systemd services and Nginx.
 
 ### Services created
 
