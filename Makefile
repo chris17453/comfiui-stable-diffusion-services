@@ -188,20 +188,20 @@ disable_services:
 
 # Create ai_manager user and add to www-data group
 create_ai_manager_user:
-	@echo "Creating ai_manager user and adding to www-data group..."
-	sudo useradd -m -s /bin/bash ai_manager || echo "User ai_manager already exists."
-	sudo usermod -aG www-data ai_manager
-	@echo "User ai_manager created and added to www-data group."
+	@echo "Creating $(SERVICE_USER) user and adding to $(SERVICE_GROUP)..."
+	sudo useradd -m -s /bin/bash $(SERVICE_USER) || echo "User $(SERVICE_USER) already exists."
+	sudo usermod -aG $(SERVICE_GROUP) $(SERVICE_USER)
+	@echo "User $(SERVICE_USER) added to $(SERVICE_GROUP)..."
 
 # Update sudoers file to allow ai_manager to run necessary commands without a password
 update_sudoers:
 	@echo "Updating sudoers file..."
-	@echo "ai_manager ALL=(ALL) NOPASSWD: /bin/systemctl start comfyui.service, /bin/systemctl start sdwebui.service, /bin/systemctl is-active" | sudo EDITOR='tee -a' visudo
+	@echo "$(SERVICE_USER) ALL=(ALL) NOPASSWD: /bin/systemctl start comfyui.service, /bin/systemctl start sdwebui.service, /bin/systemctl is-active" | sudo EDITOR='tee -a' visudo
 	@echo "Sudoers file updated successfully."
 
 # Combined target to create the user and update sudoers
 setup_ai_manager_user: create_ai_manager_user update_sudoers
-	@echo "ai_manager user setup complete."
+	@echo "$(SERVICE_USER) added user setup complete."
 
 
 
