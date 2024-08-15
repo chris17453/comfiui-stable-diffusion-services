@@ -72,11 +72,16 @@ install_nginx:
 	@echo "Installing Nginx..."
 	sudo apt update
 	sudo apt install -y nginx
-
+	
 # Configure Nginx
 configure_nginx:
-	@echo "Backing up existing Nginx configuration..."
-	sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
+	@echo "Checking if Nginx configuration exists..."
+	if [ -f /etc/nginx/nginx.conf ]; then \
+		echo "Backing up existing Nginx configuration..."; \
+		sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak; \
+	else \
+		echo "Nginx configuration not found, skipping backup."; \
+	fi
 	@echo "Configuring Nginx..."
 	sudo cp nginx/nginx.conf /etc/nginx/nginx.conf
 	sudo sed -i "s|SERVER_NAME|$(SERVER_NAME)|g" /etc/nginx/nginx.conf
@@ -88,9 +93,13 @@ configure_nginx:
 		echo "Nginx configuration applied successfully."; \
 	else \
 		echo "Nginx configuration test failed. Restoring previous configuration."; \
-		sudo cp /etc/nginx/nginx.conf.bak /etc/nginx/nginx.conf; \
-		sudo systemctl restart nginx; \
-		echo "Restored previous Nginx configuration."; \
+		if [ -f /etc/nginx/nginx.conf.bak ]; then \
+			sudo cp /etc/nginx/nginx.conf.bak /etc/nginx/nginx.conf; \
+			sudo systemctl restart nginx; \
+			echo "Restored previous Nginx configuration."; \
+		else \
+			echo "Backup not found, cannot restore previous configuration."; \
+		fi \
 	fi
 
 # Start services
