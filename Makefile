@@ -2,7 +2,7 @@
 SD_WEBUI_REPO=https://github.com/AUTOMATIC1111/stable-diffusion-webui.git
 COMFYUI_REPO=https://github.com/comfyanonymous/ComfyUI.git
 APP_SOURCE_DIR=./ai_manager
-INSTALL_DIR=/opt/AI/
+INSTALL_DIR=/opt/AI
 SERVER_NAME=gpu2.watkinslabs.com
 SERVICE_USER=ai-manager
 SERVICE_GROUP=www-data
