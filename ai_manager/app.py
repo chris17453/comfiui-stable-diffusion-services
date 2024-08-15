@@ -37,4 +37,4 @@ with gr.Blocks() as app:
     activate_sdwebui_btn.click(fn=lambda: activate_service('sdwebui.service'), inputs=[], outputs=sd_status)
 
 # Launch the app on port 5000
-app.launch(server_port=5000)
+app.launch(server_name="127.0.0.1", server_port=5000, server_root_path="/ai_manager")
