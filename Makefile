@@ -35,18 +35,38 @@ help:
 	@echo "    disable_services     Disable both sdwebui and comfyui services"
 	@echo "    stop_services        Stop all 3 services"
 	@echo "    setup_ai_manager     Create the user , group , update sudoers"
+	@echo "    create_sa            create tue user and group that runs everything"
 
 
+
+# Create the group if it doesn't exist and create ai_manager user
+create_user_group:
+	@echo "Creating $(SERVICE_GROUP) group if it doesn't exist..."
+	sudo groupadd -f $(SERVICE_GROUP)
+	@echo "Creating $(SERVICE_USER) user and adding to $(SERVICE_GROUP)..."
+	sudo useradd -m -s /bin/bash $(SERVICE_USER) || echo "User $(SERVICE_USER) already exists."
+	sudo usermod -aG $(SERVICE_GROUP) $(SERVICE_USER)
+	@echo "User $(SERVICE_USER) added to $(SERVICE_GROUP)..."
+
+# Create sudoers file for ai-manager
+create_sudoers_file:
+	@echo "Creating sudoers file for $(SERVICE_USER)..."
+	@echo "$(SERVICE_USER) ALL=(ALL) NOPASSWD: /bin/systemctl start ai_manager.service, /bin/systemctl stop ai_manager.service, /bin/systemctl restart ai_manager.service, /bin/systemctl is-active ai_manager.service" | sudo tee /etc/sudoers.d/ai-manager >/dev/null
+	@echo "$(SERVICE_USER) ALL=(ALL) NOPASSWD: /bin/systemctl start comfyui.service, /bin/systemctl stop comfyui.service, /bin/systemctl restart comfyui.service, /bin/systemctl is-active comfyui.service" | sudo tee -a /etc/sudoers.d/ai-manager >/dev/null
+	@echo "$(SERVICE_USER) ALL=(ALL) NOPASSWD: /bin/systemctl start sdwebui.service, /bin/systemctl stop sdwebui.service, /bin/systemctl restart sdwebui.service, /bin/systemctl is-active sdwebui.service" | sudo tee -a /etc/sudoers.d/ai-manager >/dev/null
+	@echo "Sudoers file created at /etc/sudoers.d/ai-manager."
+	@echo "Validating sudoers file..."
+	@sudo visudo -c || (echo "Sudoers validation failed. Please check the syntax." && exit 1)
+
+# Combined target to create the user, group, update sudoers, and set permissions
+create_sa: create_user_group create_sudoers_file set_permissions
+	@echo "$(SERVICE_USER) user setup complete with sudo permissions."
 
 # Set permissions for the /opt/AI directory
 set_permissions:
 	@echo "Setting permissions for $(INSTALL_DIR) directory..."
 	sudo chown -R $(SERVICE_USER):$(SERVICE_GROUP) $(INSTALL_DIR)
 	sudo chmod -R 775 $(INSTALL_DIR)
-
-setup_ai_manager_user: create_ai_manager_user update_sudoers set_permissions
-	@echo "ai_manager user setup complete and permissions set."
-
 
 # Create the installation directory if it doesn't exist
 create_install_dir:
@@ -185,28 +205,6 @@ disable_services:
 	@echo "Disabling both sdwebui and comfyui services..."
 	sudo systemctl disable sdwebui.service
 	sudo systemctl disable comfyui.service
-# Create the group if it doesn't exist and create ai_manager user
-create_ai_manager_user:
-	@echo "Creating $(SERVICE_GROUP) group if it doesn't exist..."
-	sudo groupadd -f $(SERVICE_GROUP)
-	@echo "Creating $(SERVICE_USER) user and adding to $(SERVICE_GROUP)..."
-	sudo useradd -m -s /bin/bash $(SERVICE_USER) || echo "User $(SERVICE_USER) already exists."
-	sudo usermod -aG $(SERVICE_GROUP) $(SERVICE_USER)
-	@echo "User $(SERVICE_USER) added to $(SERVICE_GROUP)..."
-
-# Create sudoers file for ai-manager
-create_sudoers_file:
-	@echo "Creating sudoers file for $(SERVICE_USER)..."
-	@echo "$(SERVICE_USER) ALL=(ALL) NOPASSWD: /bin/systemctl start ai_manager.service, /bin/systemctl stop ai_manager.service, /bin/systemctl restart ai_manager.service, /bin/systemctl is-active ai_manager.service" | sudo tee /etc/sudoers.d/ai-manager >/dev/null
-	@echo "$(SERVICE_USER) ALL=(ALL) NOPASSWD: /bin/systemctl start comfyui.service, /bin/systemctl stop comfyui.service, /bin/systemctl restart comfyui.service, /bin/systemctl is-active comfyui.service" | sudo tee -a /etc/sudoers.d/ai-manager >/dev/null
-	@echo "$(SERVICE_USER) ALL=(ALL) NOPASSWD: /bin/systemctl start sdwebui.service, /bin/systemctl stop sdwebui.service, /bin/systemctl restart sdwebui.service, /bin/systemctl is-active sdwebui.service" | sudo tee -a /etc/sudoers.d/ai-manager >/dev/null
-	@echo "Sudoers file created at /etc/sudoers.d/ai-manager."
-	@echo "Validating sudoers file..."
-	@sudo visudo -c || (echo "Sudoers validation failed. Please check the syntax." && exit 1)
-
-# Combined target to create the user, group, update sudoers, and set permissions
-setup_ai_manager_user: create_ai_manager_user create_sudoers_file set_permissions
-	@echo "$(SERVICE_USER) user setup complete with sudo permissions."
 
 
 
