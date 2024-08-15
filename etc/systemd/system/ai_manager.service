@@ -6,7 +6,7 @@ After=network.target
 User=your_username
 Group=www-data
 WorkingDirectory=INSTALL_DIR/ai_manager
-ExecStart=/usr/bin/python3 INSTALL_DIR/app.py
+ExecStart=INSTALL_DIR/ai_manager/venv/bin/python INSTALL_DIR/ai_manager/app.py
 Restart=always
 
 [Install]
